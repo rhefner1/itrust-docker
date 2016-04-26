@@ -1,0 +1,14 @@
+FROM tomcat:8.0-jre8
+RUN apt update
+RUN apt install -y mysql-client unzip wget netcat
+
+# Get JDBC connector and install to Tomcat
+RUN wget http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.zip -O /tmp/mysql-connector-java.zip
+RUN unzip -o /tmp/mysql-connector-java.zip -d /tmp
+RUN cp /tmp/mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar /usr/local/tomcat/lib/
+
+ADD ./itrust-docker/iTrust.war /usr/local/tomcat/webapps/
+ADD ./itrust-docker/config/itrust-test-data-files.txt /usr/local/tomcat/webapps/
+ADD ./itrust-docker/config/configure-itrust.sh /usr/local/tomcat/webapps/
+
+CMD webapps/configure-itrust.sh
